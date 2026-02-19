@@ -9,12 +9,18 @@
 /* Begin PBXBuildFile section */
 		07A11F22D2064F8A9C5B1B75 /* ObjectsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA8BF61B2FFA2C4932261B9 /* ObjectsViewController.swift */; };
 		08F57118BFDF89D8AE8C8F1D /* Tracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 98D3450D4492251839A4BED1 /* Tracker.xcdatamodeld */; };
+		0E27AE9BC2348A6658862350 /* Property+Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AFAD1296081429F7C538B8 /* Property+Value.swift */; };
 		1AA5CF8B89C4B34DC8D2BDFD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AEB557F41E43D4AD8211D9 /* SceneDelegate.swift */; };
 		1CD42F05D00D58EEC2020A78 /* TrackerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E680F9885BEC998251FE4C /* TrackerUITests.swift */; };
 		27CADD7BA39FB6BDAF1FB45C /* TrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314E3CB0DBD22D78DE8B5F9C /* TrackerTests.swift */; };
+		2F2CD78BA6284819FB478CD3 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8DB96653457CD4AEB4AD9B3 /* Log.swift */; };
 		3434E4FF179D517FD8291AFB /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D375B026463A9452A55F20E /* CoreDataStack.swift */; };
 		3FD2EAAFB280E7930ED96F50 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B20FF0CC747D8FCA272B0F2 /* AppDelegate.swift */; };
+		490942E3A78E4C27325F1180 /* EditPropertyValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E2206F0DF6351E71C634 /* EditPropertyValueViewController.swift */; };
 		5BB9A1DD6E7FFFCB1B9D7025 /* ObjectCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5D6475137B4C7A09E1FD19 /* ObjectCardCell.swift */; };
+		87ADF23207B5B0E6D1080838 /* ObjectDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC31E6F5A0EF5271CC9864C1 /* ObjectDetailViewController.swift */; };
+		A04C79D6A9EC6A10155E3764 /* PropertyHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3CDA51EBFFC9F1D9B2E3B54 /* PropertyHistoryViewController.swift */; };
+		A56A0224BF27AE4CCC658614 /* AddPropertyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9101D083D7A22C12C1BD44E6 /* AddPropertyViewController.swift */; };
 		F3212310FC394ADA600484EC /* CreateObjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44DA7B7E7E14A629BBE6659 /* CreateObjectViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -45,10 +51,16 @@
 		3B20FF0CC747D8FCA272B0F2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66AEB557F41E43D4AD8211D9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		796FAB7602277866CAA8A62E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7D29E2206F0DF6351E71C634 /* EditPropertyValueViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPropertyValueViewController.swift; sourceTree = "<group>"; };
 		85E680F9885BEC998251FE4C /* TrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerUITests.swift; sourceTree = "<group>"; };
+		9101D083D7A22C12C1BD44E6 /* AddPropertyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPropertyViewController.swift; sourceTree = "<group>"; };
 		A03E2D82D6B5B46A149B2326 /* TrackerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3CDA51EBFFC9F1D9B2E3B54 /* PropertyHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyHistoryViewController.swift; sourceTree = "<group>"; };
+		B1AFAD1296081429F7C538B8 /* Property+Value.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Property+Value.swift"; sourceTree = "<group>"; };
 		BC5D6475137B4C7A09E1FD19 /* ObjectCardCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectCardCell.swift; sourceTree = "<group>"; };
 		C52EFE27F5DB93FEFDA0E236 /* Tracker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C8DB96653457CD4AEB4AD9B3 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		DC31E6F5A0EF5271CC9864C1 /* ObjectDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetailViewController.swift; sourceTree = "<group>"; };
 		E44DA7B7E7E14A629BBE6659 /* CreateObjectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateObjectViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -57,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				2D375B026463A9452A55F20E /* CoreDataStack.swift */,
+				B1AFAD1296081429F7C538B8 /* Property+Value.swift */,
 				98D3450D4492251839A4BED1 /* Tracker.xcdatamodeld */,
 			);
 			path = Model;
@@ -85,9 +98,13 @@
 		5589F8BB946932AB93B0BB28 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
+				9101D083D7A22C12C1BD44E6 /* AddPropertyViewController.swift */,
 				E44DA7B7E7E14A629BBE6659 /* CreateObjectViewController.swift */,
+				7D29E2206F0DF6351E71C634 /* EditPropertyValueViewController.swift */,
 				BC5D6475137B4C7A09E1FD19 /* ObjectCardCell.swift */,
+				DC31E6F5A0EF5271CC9864C1 /* ObjectDetailViewController.swift */,
 				2CA8BF61B2FFA2C4932261B9 /* ObjectsViewController.swift */,
+				A3CDA51EBFFC9F1D9B2E3B54 /* PropertyHistoryViewController.swift */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -104,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				3B20FF0CC747D8FCA272B0F2 /* AppDelegate.swift */,
+				C8DB96653457CD4AEB4AD9B3 /* Log.swift */,
 				66AEB557F41E43D4AD8211D9 /* SceneDelegate.swift */,
 			);
 			path = App;
@@ -256,11 +274,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A56A0224BF27AE4CCC658614 /* AddPropertyViewController.swift in Sources */,
 				3FD2EAAFB280E7930ED96F50 /* AppDelegate.swift in Sources */,
 				3434E4FF179D517FD8291AFB /* CoreDataStack.swift in Sources */,
 				F3212310FC394ADA600484EC /* CreateObjectViewController.swift in Sources */,
+				490942E3A78E4C27325F1180 /* EditPropertyValueViewController.swift in Sources */,
+				2F2CD78BA6284819FB478CD3 /* Log.swift in Sources */,
 				5BB9A1DD6E7FFFCB1B9D7025 /* ObjectCardCell.swift in Sources */,
+				87ADF23207B5B0E6D1080838 /* ObjectDetailViewController.swift in Sources */,
 				07A11F22D2064F8A9C5B1B75 /* ObjectsViewController.swift in Sources */,
+				0E27AE9BC2348A6658862350 /* Property+Value.swift in Sources */,
+				A04C79D6A9EC6A10155E3764 /* PropertyHistoryViewController.swift in Sources */,
 				1AA5CF8B89C4B34DC8D2BDFD /* SceneDelegate.swift in Sources */,
 				08F57118BFDF89D8AE8C8F1D /* Tracker.xcdatamodeld in Sources */,
 			);

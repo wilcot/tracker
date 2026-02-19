@@ -1,5 +1,6 @@
 import UIKit
 import CoreData
+import os
 
 final class CreateObjectViewController: UIViewController {
 
@@ -34,7 +35,7 @@ final class CreateObjectViewController: UIViewController {
     private func setupNavBar() {
         saveButton = UIBarButtonItem(
             title: "Save",
-            style: .done,
+            style: .prominent,
             target: self,
             action: #selector(saveTapped)
         )
@@ -84,15 +85,29 @@ final class CreateObjectViewController: UIViewController {
         let trimmed = nameTextField.text?.trimmingCharacters(in: .whitespaces) ?? ""
         guard !trimmed.isEmpty else { return }
 
-        let object = TrackerObject(context: context)
+        let sortFetch = TrackedObject.fetchRequest()
+        sortFetch.sortDescriptors = [NSSortDescriptor(keyPath: \TrackedObject.sortOrder, ascending: false)]
+        sortFetch.fetchLimit = 1
+        let nextKey: String
+        if let topKey = (try? context.fetch(sortFetch))?.first?.sortOrder,
+           let topInt = Int(topKey) {
+            nextKey = String(format: "%010d", topInt + 1)
+        } else {
+            nextKey = String(format: "%010d", 0)
+        }
+
+        let object = TrackedObject(context: context)
         object.id = UUID()
         object.name = trimmed
         object.createdAt = Date()
+        object.sortOrder = nextKey
 
         do {
             try context.save()
+            Log.persistence.info("Object created objectName=\(trimmed, privacy: .public)")
             dismiss(animated: true)
         } catch {
+            Log.persistence.error("Save failed op=createObject objectName=\(trimmed, privacy: .public) error=\(error, privacy: .private)")
             let alert = UIAlertController(
                 title: "Save Failed",
                 message: error.localizedDescription,

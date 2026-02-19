@@ -1,12 +1,15 @@
 import UIKit
 import CoreData
+import os
 
 final class ObjectsViewController: UIViewController {
+
+    private static let logger = Logger(subsystem: Log.subsystem, category: "persistence")
 
     let context: NSManagedObjectContext
     private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<String, NSManagedObjectID>!
-    private var fetchedResultsController: NSFetchedResultsController<TrackerObject>!
+    private var fetchedResultsController: NSFetchedResultsController<TrackedObject>!
     private var fabButton: UIButton!
 
     init(context: NSManagedObjectContext) {
@@ -30,6 +33,9 @@ final class ObjectsViewController: UIViewController {
 
     override func viewIsAppearing(_ animated: Bool) {
         super.viewIsAppearing(animated)
+        if let selected = collectionView.indexPathsForSelectedItems?.first {
+            collectionView.deselectItem(at: selected, animated: animated)
+        }
     }
 
     // MARK: - Layout
@@ -71,6 +77,10 @@ final class ObjectsViewController: UIViewController {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .clear
+        collectionView.dragInteractionEnabled = true
+        collectionView.dragDelegate = self
+        collectionView.dropDelegate = self
+        collectionView.delegate = self
         view.addSubview(collectionView)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -146,8 +156,8 @@ final class ObjectsViewController: UIViewController {
     // MARK: - Fetched Results Controller
 
     private func setupFetchedResultsController() {
-        let request = TrackerObject.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \TrackerObject.createdAt, ascending: false)]
+        let request = TrackedObject.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \TrackedObject.sortOrder, ascending: true)]
         request.fetchBatchSize = 50
 
         fetchedResultsController = NSFetchedResultsController(
@@ -161,9 +171,20 @@ final class ObjectsViewController: UIViewController {
         do {
             try fetchedResultsController.performFetch()
         } catch {
-            print("FRC fetch error: \(error)")
+            Self.logger.error("FRC fetch failed op=objectsList error=\(error, privacy: .private)")
         }
         setNeedsUpdateContentUnavailableConfiguration()
+    }
+
+    // MARK: - Reorder persistence
+
+    private func persistReorder(ids: [NSManagedObjectID]) {
+        fetchedResultsController.delegate = nil
+        for (index, id) in ids.enumerated() {
+            (try? context.existingObject(with: id) as? TrackedObject)?.sortOrder = String(format: "%010d", index)
+        }
+        CoreDataStack.shared.save()
+        fetchedResultsController.delegate = self
     }
 
     // MARK: - Empty State
@@ -191,5 +212,72 @@ extension ObjectsViewController: @preconcurrency NSFetchedResultsControllerDeleg
         let snapshot = snapshotReference as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
         dataSource.apply(snapshot, animatingDifferences: view.window != nil)
         setNeedsUpdateContentUnavailableConfiguration()
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension ObjectsViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let objectID = dataSource.itemIdentifier(for: indexPath) else { return }
+        let detailVC = ObjectDetailViewController(objectID: objectID, context: context)
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
+}
+
+// MARK: - UICollectionViewDragDelegate
+
+extension ObjectsViewController: UICollectionViewDragDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        itemsForBeginning session: any UIDragSession,
+        at indexPath: IndexPath
+    ) -> [UIDragItem] {
+        guard let objectID = dataSource.itemIdentifier(for: indexPath) else { return [] }
+        let item = UIDragItem(itemProvider: NSItemProvider(object: objectID.uriRepresentation() as NSURL))
+        item.localObject = objectID
+        return [item]
+    }
+}
+
+// MARK: - UICollectionViewDropDelegate
+
+extension ObjectsViewController: UICollectionViewDropDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        dropSessionDidUpdate session: any UIDropSession,
+        withDestinationIndexPath destinationIndexPath: IndexPath?
+    ) -> UICollectionViewDropProposal {
+        guard session.localDragSession != nil else {
+            return UICollectionViewDropProposal(operation: .forbidden)
+        }
+        return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        performDropWith coordinator: any UICollectionViewDropCoordinator
+    ) {
+        for item in coordinator.items {
+            guard let sourceIndexPath = item.sourceIndexPath,
+                  let objectID = item.dragItem.localObject as? NSManagedObjectID else { continue }
+
+            var ids = dataSource.snapshot().itemIdentifiers
+            ids.remove(at: sourceIndexPath.item)
+            let insertAt = coordinator.destinationIndexPath.map { min($0.item, ids.count) } ?? ids.count
+            ids.insert(objectID, at: insertAt)
+
+            var newSnapshot = NSDiffableDataSourceSnapshot<String, NSManagedObjectID>()
+            let section = dataSource.snapshot().sectionIdentifiers.first ?? ""
+            newSnapshot.appendSections([section])
+            newSnapshot.appendItems(ids, toSection: section)
+
+            dataSource.apply(newSnapshot, animatingDifferences: false)
+            persistReorder(ids: ids)
+
+            if let dest = coordinator.destinationIndexPath {
+                coordinator.drop(item.dragItem, toItemAt: dest)
+            }
+        }
     }
 }

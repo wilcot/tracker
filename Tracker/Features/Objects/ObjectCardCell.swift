@@ -46,8 +46,8 @@ final class ObjectCardCell: UICollectionViewCell {
     }
 
     func configure(with objectID: NSManagedObjectID, in context: NSManagedObjectContext) {
-        guard let object = try? context.existingObject(with: objectID) as? TrackerObject else { return }
-        nameLabel.text = object.name
+        guard let object = try? context.existingObject(with: objectID) as? TrackedObject else { return }
+        nameLabel.text = object.name ?? ""
     }
 
     override func prepareForReuse() {
