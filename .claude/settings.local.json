@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcodegen:*)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "WebFetch"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:aplus.rs)",
+      "WebFetch(domain:nemecek.be)",
+      "WebFetch(domain:swiftsenpai.com)",
+      "WebFetch(domain:www.andrewcbancroft.com)",
+      "WebFetch(domain:medium.com)"
+    ]
+  }
+}
