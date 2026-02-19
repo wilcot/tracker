@@ -105,26 +105,6 @@ final class ObjectDetailViewController: UIViewController {
         } catch {
             Self.logger.error("FRC fetch failed op=propertyList error=\(error, privacy: .private)")
         }
-        rebuildSnapshot()
-    }
-
-    private func rebuildSnapshot() {
-        guard let allProperties = fetchedResultsController.fetchedObjects else { return }
-
-        var seen = Set<String>()
-        var latestPerName: [NSManagedObjectID] = []
-        for property in allProperties {
-            let name = property.name ?? ""
-            if seen.insert(name).inserted {
-                latestPerName.append(property.objectID)
-            }
-        }
-
-        var snapshot = NSDiffableDataSourceSnapshot<String, NSManagedObjectID>()
-        snapshot.appendSections(["main"])
-        snapshot.appendItems(latestPerName)
-        dataSource.apply(snapshot, animatingDifferences: view.window != nil)
-        setNeedsUpdateContentUnavailableConfiguration()
     }
 
     // MARK: - Empty State
@@ -169,7 +149,30 @@ extension ObjectDetailViewController: UICollectionViewDelegate {
 // MARK: - NSFetchedResultsControllerDelegate
 
 extension ObjectDetailViewController: @preconcurrency NSFetchedResultsControllerDelegate {
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        rebuildSnapshot()
+    func controller(
+        _ controller: NSFetchedResultsController<any NSFetchRequestResult>,
+        didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference
+    ) {
+        guard let allProperties = fetchedResultsController.fetchedObjects else { return }
+
+        var seen = Set<String>()
+        var latestPerName: [NSManagedObjectID] = []
+        for property in allProperties {
+            let name = property.name ?? ""
+            if seen.insert(name).inserted {
+                latestPerName.append(property.objectID)
+            }
+        }
+
+        var newSnapshot = NSDiffableDataSourceSnapshot<String, NSManagedObjectID>()
+        newSnapshot.appendSections(["main"])
+        newSnapshot.appendItems(latestPerName)
+
+        let reloaded = snapshot.reloadedItemIdentifiers.compactMap { $0 as? NSManagedObjectID }
+        let visibleReloaded = reloaded.filter { latestPerName.contains($0) }
+        newSnapshot.reconfigureItems(visibleReloaded)
+
+        dataSource.apply(newSnapshot, animatingDifferences: view.window != nil)
+        setNeedsUpdateContentUnavailableConfiguration()
     }
 }

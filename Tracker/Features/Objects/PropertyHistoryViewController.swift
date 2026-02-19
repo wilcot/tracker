@@ -116,10 +116,17 @@ final class PropertyHistoryViewController: UIViewController {
 extension PropertyHistoryViewController: @preconcurrency NSFetchedResultsControllerDelegate {
     func controller(
         _ controller: NSFetchedResultsController<any NSFetchRequestResult>,
-        didChangeContentWith snapshotReference: NSDiffableDataSourceSnapshotReference
+        didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference
     ) {
-        let snapshot = snapshotReference as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
-        dataSource.apply(snapshot, animatingDifferences: view.window != nil)
+        var newSnapshot = NSDiffableDataSourceSnapshot<String, NSManagedObjectID>()
+        newSnapshot.appendSections(["main"])
+        let items = snapshot.itemIdentifiers.compactMap { $0 as? NSManagedObjectID }
+        newSnapshot.appendItems(items, toSection: "main")
+
+        let reloaded = snapshot.reloadedItemIdentifiers.compactMap { $0 as? NSManagedObjectID }
+        newSnapshot.reconfigureItems(reloaded)
+
+        dataSource.apply(newSnapshot, animatingDifferences: view.window != nil)
         setNeedsUpdateContentUnavailableConfiguration()
     }
 }

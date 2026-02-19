@@ -48,7 +48,6 @@ final class EditPropertyValueViewController: UIViewController {
 
     private func setupNavBar() {
         saveButton = UIBarButtonItem(title: "Save", style: .prominent, target: self, action: #selector(saveTapped))
-        navigationItem.rightBarButtonItem = saveButton
 
         let historyButton = UIBarButtonItem(
             image: UIImage(systemName: "clock.arrow.circlepath"),
@@ -56,7 +55,7 @@ final class EditPropertyValueViewController: UIViewController {
             target: self,
             action: #selector(historyTapped)
         )
-        navigationItem.leftBarButtonItem = historyButton
+        navigationItem.rightBarButtonItems = [saveButton, historyButton]
     }
 
     private func setupContent(property: Property) {

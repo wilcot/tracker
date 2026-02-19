@@ -288,6 +288,21 @@ extension ObjectsViewController: ObjectFormViewControllerDelegate {
     }
 }
 
+// MARK: - Drag Preview
+
+extension ObjectsViewController {
+    private func dragPreviewParameters(for indexPath: IndexPath) -> UIDragPreviewParameters? {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? ObjectCardCell else { return nil }
+        let parameters = UIDragPreviewParameters()
+        parameters.visiblePath = UIBezierPath(
+            roundedRect: cell.cardView.bounds,
+            cornerRadius: ObjectCardView.cornerRadius
+        )
+        parameters.backgroundColor = .clear
+        return parameters
+    }
+}
+
 // MARK: - UICollectionViewDragDelegate
 
 extension ObjectsViewController: UICollectionViewDragDelegate {
@@ -299,6 +314,14 @@ extension ObjectsViewController: UICollectionViewDragDelegate {
         guard let objectID = dataSource.itemIdentifier(for: indexPath) else { return [] }
         let item = UIDragItem(itemProvider: NSItemProvider(object: objectID.uriRepresentation() as NSURL))
         item.localObject = objectID
+
+        if let parameters = dragPreviewParameters(for: indexPath),
+           let cell = collectionView.cellForItem(at: indexPath) as? ObjectCardCell {
+            item.previewProvider = {
+                UIDragPreview(view: cell.cardView, parameters: parameters)
+            }
+        }
+
         return [item]
     }
 }
@@ -315,6 +338,13 @@ extension ObjectsViewController: UICollectionViewDropDelegate {
             return UICollectionViewDropProposal(operation: .forbidden)
         }
         return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        dropPreviewParametersForItemAt indexPath: IndexPath
+    ) -> UIDragPreviewParameters? {
+        dragPreviewParameters(for: indexPath)
     }
 
     func collectionView(
