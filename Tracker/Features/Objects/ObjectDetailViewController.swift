@@ -124,13 +124,13 @@ final class ObjectDetailViewController: UIViewController {
     // MARK: - Actions
 
     private func addPropertyTapped() {
-        let addVC = AddPropertyViewController(object: object, context: context)
-        let nav = UINavigationController(rootViewController: addVC)
+        let pickerVC = PropertyTypePickerViewController(object: object, context: context)
+        let nav = UINavigationController(rootViewController: pickerVC)
         if let sheet = nav.sheetPresentationController {
-            let detent = UISheetPresentationController.Detent.custom(identifier: .init("addProperty")) { _ in 520 }
-            sheet.detents = [detent]
+            sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
-            sheet.preferredCornerRadius = 20
+            sheet.preferredCornerRadius = 24
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = true
         }
         present(nav, animated: true)
     }

@@ -12,7 +12,9 @@ final class EditPropertyValueViewController: UIViewController {
     private var scrollView: UIScrollView!
     private var stackView: UIStackView!
     private var textField: UITextField?
+    private var textView: UITextView?
     private var datePicker: UIDatePicker?
+    private var boolSwitch: UISwitch?
     private var userTimestampPicker: UIDatePicker!
     private var saveButton: UIBarButtonItem!
 
@@ -113,6 +115,40 @@ final class EditPropertyValueViewController: UIViewController {
             picker.translatesAutoresizingMaskIntoConstraints = false
             stackView.addArrangedSubview(picker)
             datePicker = picker
+
+        case .description:
+            let tv = UITextView()
+            tv.font = .preferredFont(forTextStyle: .body)
+            tv.text = property.valueString
+            tv.layer.borderWidth = 0.5
+            tv.layer.borderColor = UIColor.separator.cgColor
+            tv.layer.cornerRadius = 8
+            tv.textContainerInset = UIEdgeInsets(top: 10, left: 8, bottom: 10, right: 8)
+            tv.isScrollEnabled = false
+            tv.translatesAutoresizingMaskIntoConstraints = false
+            tv.heightAnchor.constraint(greaterThanOrEqualToConstant: 120).isActive = true
+            stackView.addArrangedSubview(tv)
+            textView = tv
+
+        case .boolean:
+            let row = UIStackView()
+            row.axis = .horizontal
+            row.spacing = 8
+            row.alignment = .center
+
+            let label = UILabel()
+            label.text = "Value"
+            label.font = .preferredFont(forTextStyle: .body)
+            label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+
+            let toggle = UISwitch()
+            toggle.isOn = property.valueInteger?.boolValue ?? false
+            toggle.addTarget(self, action: #selector(textDidChange), for: .valueChanged)
+
+            row.addArrangedSubview(label)
+            row.addArrangedSubview(toggle)
+            stackView.addArrangedSubview(row)
+            boolSwitch = toggle
         }
 
         let separator = UIView()
@@ -203,6 +239,14 @@ final class EditPropertyValueViewController: UIViewController {
 
         case .date:
             newEntry.setValue(date: datePicker?.date)
+
+        case .description:
+            let trimmed = textView?.text.trimmingCharacters(in: .whitespacesAndNewlines)
+            newEntry.setValue(string: trimmed?.isEmpty == true ? nil : trimmed)
+
+        case .boolean:
+            let isOn = boolSwitch?.isOn ?? false
+            newEntry.setValue(bool: isOn)
         }
 
         do {

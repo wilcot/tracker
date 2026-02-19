@@ -48,6 +48,12 @@ extension Property {
         case .date:
             guard let d = valueDate else { return nil }
             return Self.dateFormatter.string(from: d)
+        case .description:
+            let s = valueString?.trimmingCharacters(in: .whitespacesAndNewlines)
+            return s?.isEmpty == true ? nil : s
+        case .boolean:
+            guard let num = valueInteger else { return nil }
+            return num.boolValue ? "Yes" : "No"
         }
     }
 
@@ -77,5 +83,10 @@ extension Property {
     func setValue(date: Date?) {
         clearAllValues()
         valueDate = date
+    }
+
+    func setValue(bool: Bool) {
+        clearAllValues()
+        valueInteger = NSNumber(value: bool ? 1 : 0)
     }
 }

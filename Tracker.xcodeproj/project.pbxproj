@@ -17,15 +17,17 @@
 		2C32A91262F8D5AC647844B2 /* TrackedObject+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96662DA0C085822C30DB1B13 /* TrackedObject+Ext.swift */; };
 		2F2CD78BA6284819FB478CD3 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8DB96653457CD4AEB4AD9B3 /* Log.swift */; };
 		3434E4FF179D517FD8291AFB /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D375B026463A9452A55F20E /* CoreDataStack.swift */; };
+		38898E57401A8B9B74610E10 /* PropertyTypePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6170BA0F40071EF7FE1829F3 /* PropertyTypePickerViewController.swift */; };
 		3FD2EAAFB280E7930ED96F50 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B20FF0CC747D8FCA272B0F2 /* AppDelegate.swift */; };
 		490942E3A78E4C27325F1180 /* EditPropertyValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E2206F0DF6351E71C634 /* EditPropertyValueViewController.swift */; };
+		561780B1B08EF6911C4345FF /* AddPropertyFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B7C2F365094E477573F5DE /* AddPropertyFormViewController.swift */; };
 		5BB9A1DD6E7FFFCB1B9D7025 /* ObjectCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5D6475137B4C7A09E1FD19 /* ObjectCardCell.swift */; };
 		6414FA7DADEA65AF3CBC8A07 /* FractionalIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C3BAAEB704F54BA9F0BB195 /* FractionalIndexTests.swift */; };
+		75A257F8C243F1D5A0743C05 /* PropertyType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EB15C59B131D3BCC92E7D5 /* PropertyType.swift */; };
 		7F85F52A98DC256E26409DBD /* ColorSwatchCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376279C73E9A5BFE7F667203 /* ColorSwatchCollectionView.swift */; };
 		87ADF23207B5B0E6D1080838 /* ObjectDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC31E6F5A0EF5271CC9864C1 /* ObjectDetailViewController.swift */; };
 		909537ADA9DCF415155CD845 /* ObjectFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D9E3504E01B14B1922D478 /* ObjectFormViewController.swift */; };
 		A04C79D6A9EC6A10155E3764 /* PropertyHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3CDA51EBFFC9F1D9B2E3B54 /* PropertyHistoryViewController.swift */; };
-		A56A0224BF27AE4CCC658614 /* AddPropertyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9101D083D7A22C12C1BD44E6 /* AddPropertyViewController.swift */; };
 		BC7709CA68484332E59B6158 /* FractionalIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF357CA6CE74EFB338DFA8B /* FractionalIndex.swift */; };
 /* End PBXBuildFile section */
 
@@ -47,22 +49,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		12EB15C59B131D3BCC92E7D5 /* PropertyType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyType.swift; sourceTree = "<group>"; };
 		16884072C5B57D10FC78E05B /* Tracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tracker.entitlements; sourceTree = "<group>"; };
 		241C5E92B0837A819C89946B /* TrackerUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BF31596B8F1E2FC328C8710 /* Tracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Tracker.xcdatamodel; sourceTree = "<group>"; };
 		2CA8BF61B2FFA2C4932261B9 /* ObjectsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectsViewController.swift; sourceTree = "<group>"; };
 		2D375B026463A9452A55F20E /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		314E3CB0DBD22D78DE8B5F9C /* TrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTests.swift; sourceTree = "<group>"; };
+		34B7C2F365094E477573F5DE /* AddPropertyFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPropertyFormViewController.swift; sourceTree = "<group>"; };
 		35D9E3504E01B14B1922D478 /* ObjectFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectFormViewController.swift; sourceTree = "<group>"; };
 		376279C73E9A5BFE7F667203 /* ColorSwatchCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSwatchCollectionView.swift; sourceTree = "<group>"; };
 		39FB2F2E47B22189D0B99FE6 /* DeleteAlertHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAlertHelper.swift; sourceTree = "<group>"; };
 		3B20FF0CC747D8FCA272B0F2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5C3BAAEB704F54BA9F0BB195 /* FractionalIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FractionalIndexTests.swift; sourceTree = "<group>"; };
+		6170BA0F40071EF7FE1829F3 /* PropertyTypePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyTypePickerViewController.swift; sourceTree = "<group>"; };
 		66AEB557F41E43D4AD8211D9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		796FAB7602277866CAA8A62E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7D29E2206F0DF6351E71C634 /* EditPropertyValueViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPropertyValueViewController.swift; sourceTree = "<group>"; };
 		85E680F9885BEC998251FE4C /* TrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerUITests.swift; sourceTree = "<group>"; };
-		9101D083D7A22C12C1BD44E6 /* AddPropertyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPropertyViewController.swift; sourceTree = "<group>"; };
 		96662DA0C085822C30DB1B13 /* TrackedObject+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackedObject+Ext.swift"; sourceTree = "<group>"; };
 		A03E2D82D6B5B46A149B2326 /* TrackerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3CDA51EBFFC9F1D9B2E3B54 /* PropertyHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyHistoryViewController.swift; sourceTree = "<group>"; };
@@ -110,7 +114,7 @@
 		5589F8BB946932AB93B0BB28 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
-				9101D083D7A22C12C1BD44E6 /* AddPropertyViewController.swift */,
+				34B7C2F365094E477573F5DE /* AddPropertyFormViewController.swift */,
 				376279C73E9A5BFE7F667203 /* ColorSwatchCollectionView.swift */,
 				39FB2F2E47B22189D0B99FE6 /* DeleteAlertHelper.swift */,
 				7D29E2206F0DF6351E71C634 /* EditPropertyValueViewController.swift */,
@@ -119,6 +123,8 @@
 				35D9E3504E01B14B1922D478 /* ObjectFormViewController.swift */,
 				2CA8BF61B2FFA2C4932261B9 /* ObjectsViewController.swift */,
 				A3CDA51EBFFC9F1D9B2E3B54 /* PropertyHistoryViewController.swift */,
+				12EB15C59B131D3BCC92E7D5 /* PropertyType.swift */,
+				6170BA0F40071EF7FE1829F3 /* PropertyTypePickerViewController.swift */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -290,7 +296,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A56A0224BF27AE4CCC658614 /* AddPropertyViewController.swift in Sources */,
+				561780B1B08EF6911C4345FF /* AddPropertyFormViewController.swift in Sources */,
 				3FD2EAAFB280E7930ED96F50 /* AppDelegate.swift in Sources */,
 				7F85F52A98DC256E26409DBD /* ColorSwatchCollectionView.swift in Sources */,
 				3434E4FF179D517FD8291AFB /* CoreDataStack.swift in Sources */,
@@ -304,6 +310,8 @@
 				07A11F22D2064F8A9C5B1B75 /* ObjectsViewController.swift in Sources */,
 				0E27AE9BC2348A6658862350 /* Property+Value.swift in Sources */,
 				A04C79D6A9EC6A10155E3764 /* PropertyHistoryViewController.swift in Sources */,
+				75A257F8C243F1D5A0743C05 /* PropertyType.swift in Sources */,
+				38898E57401A8B9B74610E10 /* PropertyTypePickerViewController.swift in Sources */,
 				1AA5CF8B89C4B34DC8D2BDFD /* SceneDelegate.swift in Sources */,
 				2C32A91262F8D5AC647844B2 /* TrackedObject+Ext.swift in Sources */,
 				08F57118BFDF89D8AE8C8F1D /* Tracker.xcdatamodeld in Sources */,
