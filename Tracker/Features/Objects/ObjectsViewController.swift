@@ -97,6 +97,7 @@ final class ObjectsViewController: UIViewController {
             [weak self] cell, _, objectID in
             guard let self else { return }
             cell.configure(with: objectID, in: context)
+            cell.delegate = self
         }
 
         dataSource = UICollectionViewDiffableDataSource<String, NSManagedObjectID>(
@@ -107,6 +108,26 @@ final class ObjectsViewController: UIViewController {
                 for: indexPath,
                 item: objectID
             )
+        }
+
+        dataSource.reorderingHandlers.canReorderItem = { _ in true }
+        dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
+            guard let self,
+                  let sectionTransaction = transaction.sectionTransactions.first else { return }
+
+            let orderedIDs = sectionTransaction.finalSnapshot.items
+            let updatedItems = orderedIDs.compactMap { objectID in
+                self.context.object(with: objectID) as? TrackedObject
+            }
+
+            self.fetchedResultsController.delegate = nil
+            FractionalIndex.applyReorder(updatedItems)
+            CoreDataStack.shared.save()
+
+            DispatchQueue.main.async {
+                try? self.fetchedResultsController.performFetch()
+                self.fetchedResultsController.delegate = self
+            }
         }
     }
 
@@ -138,18 +159,13 @@ final class ObjectsViewController: UIViewController {
     }
 
     @objc private func fabTapped() {
-        let createVC = CreateObjectViewController(context: context)
-        let nav = UINavigationController(rootViewController: createVC)
+        presentObjectForm(mode: .create)
+    }
 
-        if let sheet = nav.sheetPresentationController {
-            let smallDetent = UISheetPresentationController.Detent.custom(
-                identifier: .init("small")
-            ) { _ in 250 }
-            sheet.detents = [smallDetent]
-            sheet.prefersGrabberVisible = true
-            sheet.preferredCornerRadius = 20
-        }
-
+    private func presentObjectForm(mode: ObjectFormViewController.Mode) {
+        let formVC = ObjectFormViewController(context: context, mode: mode)
+        formVC.delegate = self
+        let nav = UINavigationController(rootViewController: formVC)
         present(nav, animated: true)
     }
 
@@ -176,15 +192,20 @@ final class ObjectsViewController: UIViewController {
         setNeedsUpdateContentUnavailableConfiguration()
     }
 
-    // MARK: - Reorder persistence
+    // MARK: - Delete
 
-    private func persistReorder(ids: [NSManagedObjectID]) {
-        fetchedResultsController.delegate = nil
-        for (index, id) in ids.enumerated() {
-            (try? context.existingObject(with: id) as? TrackedObject)?.sortOrder = String(format: "%010d", index)
-        }
-        CoreDataStack.shared.save()
-        fetchedResultsController.delegate = self
+    private func deleteObject(_ object: TrackedObject) {
+        DeleteAlertHelper.presentDeleteConfirmation(
+            from: self,
+            title: "Delete Object?",
+            message: "This will permanently delete \"\(object.name ?? "")\" and all its properties.",
+            onConfirm: { [weak self] in
+                guard let self else { return }
+                self.context.delete(object)
+                CoreDataStack.shared.save()
+                Self.logger.info("Object deleted objectName=\(object.name ?? "", privacy: .public)")
+            }
+        )
     }
 
     // MARK: - Empty State
@@ -209,7 +230,13 @@ extension ObjectsViewController: @preconcurrency NSFetchedResultsControllerDeleg
         _ controller: NSFetchedResultsController<any NSFetchRequestResult>,
         didChangeContentWith snapshotReference: NSDiffableDataSourceSnapshotReference
     ) {
-        let snapshot = snapshotReference as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
+        var snapshot = snapshotReference as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
+
+        let reloaded = snapshot.itemIdentifiers.filter { snapshot.reloadedItemIdentifiers.contains($0) }
+        if !reloaded.isEmpty {
+            snapshot.reconfigureItems(reloaded)
+        }
+
         dataSource.apply(snapshot, animatingDifferences: view.window != nil)
         setNeedsUpdateContentUnavailableConfiguration()
     }
@@ -222,6 +249,42 @@ extension ObjectsViewController: UICollectionViewDelegate {
         guard let objectID = dataSource.itemIdentifier(for: indexPath) else { return }
         let detailVC = ObjectDetailViewController(objectID: objectID, context: context)
         navigationController?.pushViewController(detailVC, animated: true)
+    }
+}
+
+// MARK: - ObjectCardCellDelegate
+
+extension ObjectsViewController: ObjectCardCellDelegate {
+
+    func objectCardCellDidRequestEdit(_ cell: ObjectCardCell) {
+        guard let indexPath = collectionView.indexPath(for: cell),
+              let objectID = dataSource.itemIdentifier(for: indexPath),
+              let object = try? context.existingObject(with: objectID) as? TrackedObject else {
+            return
+        }
+        presentObjectForm(mode: .edit(object))
+    }
+
+    func objectCardCellDidRequestDelete(_ cell: ObjectCardCell) {
+        guard let indexPath = collectionView.indexPath(for: cell),
+              let objectID = dataSource.itemIdentifier(for: indexPath),
+              let object = try? context.existingObject(with: objectID) as? TrackedObject else {
+            return
+        }
+        deleteObject(object)
+    }
+}
+
+// MARK: - ObjectFormViewControllerDelegate
+
+extension ObjectsViewController: ObjectFormViewControllerDelegate {
+
+    func objectFormViewControllerDidSave(_ controller: ObjectFormViewController) {
+        controller.dismiss(animated: true)
+    }
+
+    func objectFormViewControllerDidCancel(_ controller: ObjectFormViewController) {
+        controller.dismiss(animated: true)
     }
 }
 
@@ -258,26 +321,6 @@ extension ObjectsViewController: UICollectionViewDropDelegate {
         _ collectionView: UICollectionView,
         performDropWith coordinator: any UICollectionViewDropCoordinator
     ) {
-        for item in coordinator.items {
-            guard let sourceIndexPath = item.sourceIndexPath,
-                  let objectID = item.dragItem.localObject as? NSManagedObjectID else { continue }
-
-            var ids = dataSource.snapshot().itemIdentifiers
-            ids.remove(at: sourceIndexPath.item)
-            let insertAt = coordinator.destinationIndexPath.map { min($0.item, ids.count) } ?? ids.count
-            ids.insert(objectID, at: insertAt)
-
-            var newSnapshot = NSDiffableDataSourceSnapshot<String, NSManagedObjectID>()
-            let section = dataSource.snapshot().sectionIdentifiers.first ?? ""
-            newSnapshot.appendSections([section])
-            newSnapshot.appendItems(ids, toSection: section)
-
-            dataSource.apply(newSnapshot, animatingDifferences: false)
-            persistReorder(ids: ids)
-
-            if let dest = coordinator.destinationIndexPath {
-                coordinator.drop(item.dragItem, toItemAt: dest)
-            }
-        }
+        // reorderingHandlers.didReorder handles the reorder
     }
 }

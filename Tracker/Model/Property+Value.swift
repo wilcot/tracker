@@ -1,6 +1,14 @@
 import CoreData
 import Foundation
 
+extension Property: Orderable {
+
+    var order: String? {
+        get { sortOrder }
+        set { sortOrder = newValue }
+    }
+}
+
 extension Property {
 
     private static let dateFormatter: DateFormatter = {

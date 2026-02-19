@@ -173,18 +173,10 @@ final class AddPropertyViewController: UIViewController {
 
         let selectedType = PropertyType.allCases[typeControl.selectedSegmentIndex]
 
-        let sortFetch = Property.fetchRequest()
-        sortFetch.predicate = NSPredicate(format: "object == %@", object)
-        sortFetch.sortDescriptors = [NSSortDescriptor(keyPath: \Property.sortOrder, ascending: false)]
-        sortFetch.fetchLimit = 1
-
-        let nextKey: String
-        if let topKey = (try? context.fetch(sortFetch))?.first?.sortOrder,
-           let topInt = Int(topKey) {
-            nextKey = String(format: "%010d", topInt + 1)
-        } else {
-            nextKey = String(format: "%010d", 0)
-        }
+        let siblingFetch = Property.fetchRequest()
+        siblingFetch.predicate = NSPredicate(format: "object == %@", object)
+        let siblings = (try? context.fetch(siblingFetch)) ?? []
+        let nextKey = FractionalIndex.nextKey(after: siblings)
 
         let property = Property(context: context)
         property.id = UUID()

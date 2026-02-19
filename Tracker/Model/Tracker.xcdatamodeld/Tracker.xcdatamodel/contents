@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24A335" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="NO" userDefinedModelVersionIdentifier="">
     <entity name="TrackedObject" representedClassName="TrackedObject" syncable="YES" codeGenerationType="class">
+        <attribute name="colorHex" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="objectDescription" optional="YES" attributeType="String"/>
         <attribute name="sortOrder" optional="YES" attributeType="String"/>
         <relationship name="properties" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Property" inverseName="object" inverseEntity="Property"/>
     </entity>
