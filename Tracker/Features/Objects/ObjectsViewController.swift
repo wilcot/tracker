@@ -15,7 +15,7 @@ final class ObjectsViewController: UIViewController {
     init(context: NSManagedObjectContext) {
         self.context = context
         super.init(nibName: nil, bundle: nil)
-        title = "Objects"
+        title = "Everything"
     }
 
     required init?(coder: NSCoder) {
@@ -41,15 +41,13 @@ final class ObjectsViewController: UIViewController {
     // MARK: - Layout
 
     private func makeLayout() -> UICollectionViewLayout {
-        UICollectionViewCompositionalLayout { [weak self] _, environment in
-            _ = self
+        UICollectionViewCompositionalLayout { _, environment in
             let width = environment.container.effectiveContentSize.width
             let columns: Int
             switch width {
-            case ..<400: columns = 1
-            case ..<700: columns = 2
-            case ..<1000: columns = 3
-            default: columns = 4
+            case ..<500:  columns = 2
+            case ..<900:  columns = 3
+            default:      columns = 4
             }
 
             let itemSize = NSCollectionLayoutSize(
@@ -57,16 +55,16 @@ final class ObjectsViewController: UIViewController {
                 heightDimension: .fractionalHeight(1.0)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            item.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6)
+            item.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
 
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .absolute(120)
+                heightDimension: .absolute(160)
             )
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
             let section = NSCollectionLayoutSection(group: group)
-            section.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12)
+            section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
             return section
         }
     }
@@ -136,25 +134,27 @@ final class ObjectsViewController: UIViewController {
     private func setupFAB() {
         var config = UIButton.Configuration.filled()
         config.cornerStyle = .capsule
+        config.baseBackgroundColor = .systemIndigo
+        config.baseForegroundColor = .white
         config.image = UIImage(
             systemName: "plus",
-            withConfiguration: UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
         )
 
         fabButton = UIButton(configuration: config)
         fabButton.translatesAutoresizingMaskIntoConstraints = false
-        fabButton.layer.shadowColor = UIColor.black.cgColor
-        fabButton.layer.shadowOffset = CGSize(width: 0, height: 4)
-        fabButton.layer.shadowRadius = 8
-        fabButton.layer.shadowOpacity = 0.2
+        fabButton.layer.shadowColor = UIColor.systemIndigo.cgColor
+        fabButton.layer.shadowOffset = CGSize(width: 0, height: 6)
+        fabButton.layer.shadowRadius = 14
+        fabButton.layer.shadowOpacity = 0.35
         fabButton.addTarget(self, action: #selector(fabTapped), for: .touchUpInside)
 
         view.addSubview(fabButton)
         NSLayoutConstraint.activate([
             fabButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             fabButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            fabButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 56),
-            fabButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 56),
+            fabButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 64),
+            fabButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 64),
         ])
     }
 

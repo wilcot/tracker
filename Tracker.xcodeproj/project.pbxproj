@@ -22,6 +22,7 @@
 		490942E3A78E4C27325F1180 /* EditPropertyValueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D29E2206F0DF6351E71C634 /* EditPropertyValueViewController.swift */; };
 		561780B1B08EF6911C4345FF /* AddPropertyFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B7C2F365094E477573F5DE /* AddPropertyFormViewController.swift */; };
 		5BB9A1DD6E7FFFCB1B9D7025 /* ObjectCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5D6475137B4C7A09E1FD19 /* ObjectCardCell.swift */; };
+		5F6FFB402F7D3A0D211B57B3 /* IconPickerCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAEB38D20025CEABD3DF33B /* IconPickerCollectionView.swift */; };
 		6414FA7DADEA65AF3CBC8A07 /* FractionalIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C3BAAEB704F54BA9F0BB195 /* FractionalIndexTests.swift */; };
 		75A257F8C243F1D5A0743C05 /* PropertyType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EB15C59B131D3BCC92E7D5 /* PropertyType.swift */; };
 		7F85F52A98DC256E26409DBD /* ColorSwatchCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376279C73E9A5BFE7F667203 /* ColorSwatchCollectionView.swift */; };
@@ -75,6 +76,7 @@
 		BFF357CA6CE74EFB338DFA8B /* FractionalIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FractionalIndex.swift; sourceTree = "<group>"; };
 		C52EFE27F5DB93FEFDA0E236 /* Tracker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8DB96653457CD4AEB4AD9B3 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		CEAEB38D20025CEABD3DF33B /* IconPickerCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPickerCollectionView.swift; sourceTree = "<group>"; };
 		DC31E6F5A0EF5271CC9864C1 /* ObjectDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -118,6 +120,7 @@
 				376279C73E9A5BFE7F667203 /* ColorSwatchCollectionView.swift */,
 				39FB2F2E47B22189D0B99FE6 /* DeleteAlertHelper.swift */,
 				7D29E2206F0DF6351E71C634 /* EditPropertyValueViewController.swift */,
+				CEAEB38D20025CEABD3DF33B /* IconPickerCollectionView.swift */,
 				BC5D6475137B4C7A09E1FD19 /* ObjectCardCell.swift */,
 				DC31E6F5A0EF5271CC9864C1 /* ObjectDetailViewController.swift */,
 				35D9E3504E01B14B1922D478 /* ObjectFormViewController.swift */,
@@ -303,6 +306,7 @@
 				1A8CE33BA97E461B0C1F9570 /* DeleteAlertHelper.swift in Sources */,
 				490942E3A78E4C27325F1180 /* EditPropertyValueViewController.swift in Sources */,
 				BC7709CA68484332E59B6158 /* FractionalIndex.swift in Sources */,
+				5F6FFB402F7D3A0D211B57B3 /* IconPickerCollectionView.swift in Sources */,
 				2F2CD78BA6284819FB478CD3 /* Log.swift in Sources */,
 				5BB9A1DD6E7FFFCB1B9D7025 /* ObjectCardCell.swift in Sources */,
 				87ADF23207B5B0E6D1080838 /* ObjectDetailViewController.swift in Sources */,

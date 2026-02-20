@@ -29,8 +29,8 @@ final class ObjectCardCell: UICollectionViewCell {
         layer.masksToBounds = false
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOffset = CGSize(width: 0, height: 2)
-        layer.shadowRadius = 6
-        layer.shadowOpacity = 0.08
+        layer.shadowRadius = 8
+        layer.shadowOpacity = 0.06
 
         cardView.translatesAutoresizingMaskIntoConstraints = false
         cardView.delegate = self
@@ -40,7 +40,7 @@ final class ObjectCardCell: UICollectionViewCell {
             cardView.topAnchor.constraint(equalTo: contentView.topAnchor),
             cardView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             cardView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            cardView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            cardView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
 
@@ -48,9 +48,17 @@ final class ObjectCardCell: UICollectionViewCell {
         guard let object = try? context.existingObject(with: objectID) as? TrackedObject else { return }
         cardView.configure(
             title: object.name ?? "",
-            description: object.objectDescription,
+            iconName: object.displayIconName,
             color: object.displayColor
         )
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.shadowPath = UIBezierPath(
+            roundedRect: cardView.frame,
+            cornerRadius: ObjectCardView.cornerRadius
+        ).cgPath
     }
 
     override func prepareForReuse() {
@@ -82,56 +90,37 @@ protocol ObjectCardViewDelegate: AnyObject {
 
 final class ObjectCardView: UIView {
 
-    static let cornerRadius: CGFloat = 14
+    static let cornerRadius: CGFloat = 32
 
     weak var delegate: ObjectCardViewDelegate?
 
-    private let backgroundColorView: UIView = {
+    private let iconContainer: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = cornerRadius
+        view.layer.cornerRadius = 14
         view.layer.cornerCurve = .continuous
         return view
     }()
 
-    private let borderView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .clear
-        view.layer.cornerRadius = cornerRadius
-        view.layer.cornerCurve = .continuous
-        view.layer.borderWidth = 2
-        view.isUserInteractionEnabled = false
-        return view
+    private let iconImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        iv.contentMode = .scaleAspectFit
+        iv.preferredSymbolConfiguration = UIImage.SymbolConfiguration(
+            pointSize: 18, weight: .semibold
+        )
+        return iv
     }()
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .headline)
+        label.font = .systemFont(ofSize: 17, weight: .bold)
         label.textColor = .label
-        label.textAlignment = .center
-        label.numberOfLines = 3
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .subheadline)
-        label.textColor = .secondaryLabel
-        label.textAlignment = .center
+        label.textAlignment = .natural
         label.numberOfLines = 2
+        label.lineBreakMode = .byTruncatingTail
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
-    }()
-
-    private let stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 6
-        stack.alignment = .center
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
     }()
 
     override init(frame: CGRect) {
@@ -145,34 +134,34 @@ final class ObjectCardView: UIView {
     }
 
     private func setupView() {
+        backgroundColor = .systemBackground
         layer.cornerRadius = Self.cornerRadius
         layer.cornerCurve = .continuous
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.separator.withAlphaComponent(0.2).cgColor
         clipsToBounds = true
 
-        addSubview(backgroundColorView)
+        iconContainer.addSubview(iconImageView)
+        addSubview(iconContainer)
+        addSubview(titleLabel)
 
-        stackView.addArrangedSubview(titleLabel)
-        stackView.addArrangedSubview(descriptionLabel)
-        addSubview(stackView)
-
-        addSubview(borderView)
+        let iconSize: CGFloat = 44
+        let iconInnerSize: CGFloat = 22
 
         NSLayoutConstraint.activate([
-            backgroundColorView.topAnchor.constraint(equalTo: topAnchor),
-            backgroundColorView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            backgroundColorView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            backgroundColorView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            iconContainer.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            iconContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            iconContainer.widthAnchor.constraint(equalToConstant: iconSize),
+            iconContainer.heightAnchor.constraint(equalToConstant: iconSize),
 
-            stackView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 12),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -12),
-            stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            iconImageView.centerXAnchor.constraint(equalTo: iconContainer.centerXAnchor),
+            iconImageView.centerYAnchor.constraint(equalTo: iconContainer.centerYAnchor),
+            iconImageView.widthAnchor.constraint(equalToConstant: iconInnerSize),
+            iconImageView.heightAnchor.constraint(equalToConstant: iconInnerSize),
 
-            borderView.topAnchor.constraint(equalTo: topAnchor),
-            borderView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            borderView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            borderView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
         ])
     }
 
@@ -181,31 +170,20 @@ final class ObjectCardView: UIView {
         addInteraction(interaction)
     }
 
-    func configure(title: String, description: String?, color: UIColor?) {
+    func configure(title: String, iconName: String, color: UIColor?) {
         titleLabel.text = title
 
-        let trimmedDesc = description?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        if trimmedDesc.isEmpty {
-            descriptionLabel.text = nil
-            descriptionLabel.isHidden = true
-        } else {
-            descriptionLabel.text = trimmedDesc
-            descriptionLabel.isHidden = false
-        }
-
-        let bgColor = color?.withAlphaComponent(0.18) ?? .secondarySystemGroupedBackground
-        let borderColor = color?.withAlphaComponent(0.7) ?? .separator
-
-        backgroundColorView.backgroundColor = bgColor
-        borderView.layer.borderColor = borderColor.cgColor
+        let tintColor = color ?? .systemGray
+        iconContainer.backgroundColor = tintColor.withAlphaComponent(0.15)
+        iconImageView.tintColor = tintColor
+        iconImageView.image = UIImage(systemName: iconName)
+            ?? UIImage(systemName: "cube.fill")
     }
 
     func prepareForReuse() {
         titleLabel.text = nil
-        descriptionLabel.text = nil
-        descriptionLabel.isHidden = true
-        backgroundColorView.backgroundColor = .secondarySystemGroupedBackground
-        borderView.layer.borderColor = UIColor.separator.cgColor
+        iconImageView.image = nil
+        iconContainer.backgroundColor = nil
     }
 }
 

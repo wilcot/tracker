@@ -25,6 +25,7 @@ final class ObjectFormViewController: UITableViewController {
     private var titleText: String = ""
     private var descriptionText: String = ""
     private var selectedColorHex: String?
+    private var selectedIconName: String?
 
     private lazy var titleTextField: UITextField = {
         let tf = UITextField()
@@ -62,6 +63,12 @@ final class ObjectFormViewController: UITableViewController {
         return view
     }()
 
+    private lazy var iconPickerView: IconPickerCollectionView = {
+        let view = IconPickerCollectionView()
+        view.delegate = self
+        return view
+    }()
+
     private var isSaveEnabled: Bool {
         !titleText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
@@ -77,6 +84,7 @@ final class ObjectFormViewController: UITableViewController {
             titleText = object.name ?? ""
             descriptionText = object.objectDescription ?? ""
             selectedColorHex = object.colorHex
+            selectedIconName = object.iconName
         }
     }
 
@@ -128,6 +136,8 @@ final class ObjectFormViewController: UITableViewController {
         descriptionTextView.text = descriptionText
         descriptionPlaceholder.isHidden = !descriptionText.isEmpty
         colorSwatchView.selectedHex = selectedColorHex
+        iconPickerView.selectedIcon = selectedIconName
+        iconPickerView.accentColor = ObjectColorCodec.uiColor(from: selectedColorHex)
     }
 
     private func updateSaveButton() {
@@ -150,13 +160,13 @@ final class ObjectFormViewController: UITableViewController {
 
         switch mode {
         case .create:
-            createObject(name: trimmedTitle, description: finalDesc, colorHex: selectedColorHex)
+            createObject(name: trimmedTitle, description: finalDesc, colorHex: selectedColorHex, iconName: selectedIconName)
         case .edit(let object):
-            updateObject(object, name: trimmedTitle, description: finalDesc, colorHex: selectedColorHex)
+            updateObject(object, name: trimmedTitle, description: finalDesc, colorHex: selectedColorHex, iconName: selectedIconName)
         }
     }
 
-    private func createObject(name: String, description: String?, colorHex: String?) {
+    private func createObject(name: String, description: String?, colorHex: String?, iconName: String?) {
         let allObjects = (try? context.fetch(TrackedObject.fetchRequest())) ?? []
         let nextKey = FractionalIndex.nextKey(after: allObjects)
 
@@ -165,16 +175,18 @@ final class ObjectFormViewController: UITableViewController {
         object.name = name
         object.objectDescription = description
         object.colorHex = colorHex
+        object.iconName = iconName
         object.createdAt = Date()
         object.sortOrder = nextKey
 
         saveContext(operationName: "createObject", objectName: name)
     }
 
-    private func updateObject(_ object: TrackedObject, name: String, description: String?, colorHex: String?) {
+    private func updateObject(_ object: TrackedObject, name: String, description: String?, colorHex: String?, iconName: String?) {
         object.name = name
         object.objectDescription = description
         object.colorHex = colorHex
+        object.iconName = iconName
 
         saveContext(operationName: "updateObject", objectName: name)
     }
@@ -199,7 +211,7 @@ final class ObjectFormViewController: UITableViewController {
     // MARK: - UITableViewDataSource
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        3
+        4
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -210,7 +222,8 @@ final class ObjectFormViewController: UITableViewController {
         switch section {
         case 0: return nil
         case 1: return "Description"
-        case 2: return "Color"
+        case 2: return "Icon"
+        case 3: return "Color"
         default: return nil
         }
     }
@@ -227,7 +240,7 @@ final class ObjectFormViewController: UITableViewController {
                 titleTextField.topAnchor.constraint(equalTo: cell.contentView.topAnchor, constant: 12),
                 titleTextField.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 16),
                 titleTextField.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -16),
-                titleTextField.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -12)
+                titleTextField.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -12),
             ])
 
         case 1:
@@ -245,13 +258,23 @@ final class ObjectFormViewController: UITableViewController {
             ])
 
         case 2:
+            iconPickerView.translatesAutoresizingMaskIntoConstraints = false
+            cell.contentView.addSubview(iconPickerView)
+            NSLayoutConstraint.activate([
+                iconPickerView.topAnchor.constraint(equalTo: cell.contentView.topAnchor, constant: 8),
+                iconPickerView.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 16),
+                iconPickerView.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -16),
+                iconPickerView.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -8),
+            ])
+
+        case 3:
             colorSwatchView.translatesAutoresizingMaskIntoConstraints = false
             cell.contentView.addSubview(colorSwatchView)
             NSLayoutConstraint.activate([
                 colorSwatchView.topAnchor.constraint(equalTo: cell.contentView.topAnchor, constant: 8),
                 colorSwatchView.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 16),
                 colorSwatchView.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -16),
-                colorSwatchView.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -8)
+                colorSwatchView.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor, constant: -8),
             ])
 
         default:
@@ -265,7 +288,8 @@ final class ObjectFormViewController: UITableViewController {
         switch indexPath.section {
         case 0: return 44
         case 1: return 180
-        case 2: return 124
+        case 2: return 260
+        case 3: return 124
         default: return UITableView.automaticDimension
         }
     }
@@ -302,5 +326,15 @@ extension ObjectFormViewController: ColorSwatchCollectionViewDelegate {
 
     func colorSwatchCollectionView(_ collectionView: ColorSwatchCollectionView, didSelectColorHex hex: String?) {
         selectedColorHex = hex
+        iconPickerView.accentColor = ObjectColorCodec.uiColor(from: hex)
+    }
+}
+
+// MARK: - IconPickerCollectionViewDelegate
+
+extension ObjectFormViewController: IconPickerCollectionViewDelegate {
+
+    func iconPickerCollectionView(_ view: IconPickerCollectionView, didSelectIcon iconName: String?) {
+        selectedIconName = iconName
     }
 }
