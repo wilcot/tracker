@@ -2,17 +2,24 @@ import UIKit
 import CoreData
 import os
 
-final class PropertyTypePickerViewController: UIViewController {
+nonisolated private enum TypePickerSection: Hashable, Sendable {
+    case types
+    case tip
+}
 
-    private static let sectionTypes = "types"
-    private static let sectionTip = "tip"
-    private static let tipItemID = "__pro_tip__"
+nonisolated private enum TypePickerItem: Hashable, Sendable {
+    case propertyType(PropertyType)
+    case tip
+}
+
+final class PropertyTypePickerViewController: UIViewController {
 
     private let object: TrackedObject
     private let context: NSManagedObjectContext
     private var collectionView: UICollectionView!
-    private var dataSource: UICollectionViewDiffableDataSource<String, String>!
+    private var dataSource: UICollectionViewDiffableDataSource<TypePickerSection, TypePickerItem>!
     private let haptic = UIImpactFeedbackGenerator(style: .medium)
+    private var needsEntranceAnimation = true
 
     init(object: TrackedObject, context: NSManagedObjectContext) {
         self.object = object
@@ -36,11 +43,20 @@ final class PropertyTypePickerViewController: UIViewController {
     override func viewIsAppearing(_ animated: Bool) {
         super.viewIsAppearing(animated)
         haptic.prepare()
+        if needsEntranceAnimation {
+            for cell in collectionView.visibleCells {
+                cell.alpha = 0
+                cell.transform = CGAffineTransform(translationX: 0, y: 30)
+            }
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        animateCardsIn()
+        if needsEntranceAnimation {
+            needsEntranceAnimation = false
+            animateCardsIn()
+        }
     }
 
     // MARK: - Navigation
@@ -116,43 +132,39 @@ final class PropertyTypePickerViewController: UIViewController {
     // MARK: - Data Source
 
     private func setupDataSource() {
-        let cardRegistration = UICollectionView.CellRegistration<PropertyTypeCardCell, String> { cell, _, rawValue in
-            guard let propertyType = PropertyType(rawValue: rawValue) else { return }
-            cell.configure(with: propertyType)
+        let cardRegistration = UICollectionView.CellRegistration<PropertyTypeCardCell, TypePickerItem> { cell, _, item in
+            if case .propertyType(let type) = item {
+                cell.configure(with: type)
+            }
         }
 
-        let tipRegistration = UICollectionView.CellRegistration<ProTipCell, String> { cell, _, _ in
+        let tipRegistration = UICollectionView.CellRegistration<ProTipCell, TypePickerItem> { cell, _, _ in
             cell.configure()
         }
 
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView) {
             collectionView, indexPath, item in
-            if indexPath.section == 0 {
+            switch item {
+            case .propertyType:
                 return collectionView.dequeueConfiguredReusableCell(using: cardRegistration, for: indexPath, item: item)
-            } else {
+            case .tip:
                 return collectionView.dequeueConfiguredReusableCell(using: tipRegistration, for: indexPath, item: item)
             }
         }
     }
 
     private func applySnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<String, String>()
-        snapshot.appendSections([Self.sectionTypes, Self.sectionTip])
-        snapshot.appendItems(PropertyType.allCases.map(\.rawValue), toSection: Self.sectionTypes)
-        snapshot.appendItems([Self.tipItemID], toSection: Self.sectionTip)
+        var snapshot = NSDiffableDataSourceSnapshot<TypePickerSection, TypePickerItem>()
+        snapshot.appendSections([.types, .tip])
+        snapshot.appendItems(PropertyType.allCases.map { .propertyType($0) }, toSection: .types)
+        snapshot.appendItems([.tip], toSection: .tip)
         dataSource.apply(snapshot, animatingDifferences: false)
     }
 
     // MARK: - Animations
 
     private func animateCardsIn() {
-        let visibleCells = collectionView.visibleCells
-        for cell in visibleCells {
-            cell.alpha = 0
-            cell.transform = CGAffineTransform(translationX: 0, y: 30)
-        }
-
-        for (index, cell) in visibleCells.enumerated() {
+        for (index, cell) in collectionView.visibleCells.enumerated() {
             let delay = Double(index) * 0.08
             UIView.animate(
                 withDuration: 0.5,
@@ -181,9 +193,7 @@ final class PropertyTypePickerViewController: UIViewController {
 extension PropertyTypePickerViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard indexPath.section == 0,
-              let rawValue = dataSource.itemIdentifier(for: indexPath),
-              let propertyType = PropertyType(rawValue: rawValue) else { return }
+        guard case .propertyType(let propertyType) = dataSource.itemIdentifier(for: indexPath) else { return }
 
         haptic.impactOccurred()
 

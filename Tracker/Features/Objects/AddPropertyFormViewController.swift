@@ -190,6 +190,7 @@ final class AddPropertyFormViewController: UIViewController {
 
         case .integer:
             let field = makeStyledTextField(placeholder: "Number", keyboard: .numberPad)
+            field.delegate = self
             contentStack.addArrangedSubview(field)
             valueTextField = field
 
@@ -378,5 +379,17 @@ extension AddPropertyFormViewController: UITextFieldDelegate {
             saveTapped()
         }
         return true
+    }
+
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard textField === valueTextField, propertyType == .integer else { return true }
+        if string.isEmpty { return true }
+        let allowed = CharacterSet.decimalDigits
+        let negative = CharacterSet(charactersIn: "-")
+        let input = CharacterSet(charactersIn: string)
+        if input.isSubset(of: allowed) { return true }
+        if input.isSubset(of: negative), range.location == 0,
+           !(textField.text ?? "").contains("-") { return true }
+        return false
     }
 }

@@ -4,7 +4,7 @@
       "Bash(xcodegen:*)",
       "WebFetch(domain:github.com)",
       "WebSearch",
-      "WebFetch"
+      "WebFetch",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:aplus.rs)",
       "WebFetch(domain:nemecek.be)",

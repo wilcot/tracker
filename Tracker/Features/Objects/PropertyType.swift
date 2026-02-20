@@ -1,6 +1,6 @@
 import UIKit
 
-enum PropertyType: String, CaseIterable, Sendable {
+nonisolated enum PropertyType: String, CaseIterable, Sendable {
     case string = "string"
     case integer = "integer"
     case date = "date"
