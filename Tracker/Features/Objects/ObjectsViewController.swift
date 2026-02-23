@@ -43,27 +43,27 @@ final class ObjectsViewController: UIViewController {
     private func makeLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout { _, environment in
             let width = environment.container.effectiveContentSize.width
-            let columns: Int
-            switch width {
-            case ..<500:  columns = 2
-            case ..<900:  columns = 3
-            default:      columns = 4
-            }
+            let spacing: CGFloat = 16
+            let horizontalInsets: CGFloat = 32
+            let itemWidth: CGFloat = 160
+            let availableWidth = width - horizontalInsets
+            let columns = max(2, Int(availableWidth / (itemWidth + spacing)))
 
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0 / CGFloat(columns)),
-                heightDimension: .fractionalHeight(1.0)
+                heightDimension: .estimated(160)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            item.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
 
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .absolute(160)
+                heightDimension: .estimated(160)
             )
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+            group.interItemSpacing = .fixed(spacing)
 
             let section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = spacing
             section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
             return section
         }
@@ -288,21 +288,6 @@ extension ObjectsViewController: ObjectFormViewControllerDelegate {
     }
 }
 
-// MARK: - Drag Preview
-
-extension ObjectsViewController {
-    private func dragPreviewParameters(for indexPath: IndexPath) -> UIDragPreviewParameters? {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? ObjectCardCell else { return nil }
-        let parameters = UIDragPreviewParameters()
-        parameters.visiblePath = UIBezierPath(
-            roundedRect: cell.cardView.bounds,
-            cornerRadius: ObjectCardView.cornerRadius
-        )
-        parameters.backgroundColor = .clear
-        return parameters
-    }
-}
-
 // MARK: - UICollectionViewDragDelegate
 
 extension ObjectsViewController: UICollectionViewDragDelegate {
@@ -314,14 +299,6 @@ extension ObjectsViewController: UICollectionViewDragDelegate {
         guard let objectID = dataSource.itemIdentifier(for: indexPath) else { return [] }
         let item = UIDragItem(itemProvider: NSItemProvider(object: objectID.uriRepresentation() as NSURL))
         item.localObject = objectID
-
-        if let parameters = dragPreviewParameters(for: indexPath),
-           let cell = collectionView.cellForItem(at: indexPath) as? ObjectCardCell {
-            item.previewProvider = {
-                UIDragPreview(view: cell.cardView, parameters: parameters)
-            }
-        }
-
         return [item]
     }
 }
@@ -338,13 +315,6 @@ extension ObjectsViewController: UICollectionViewDropDelegate {
             return UICollectionViewDropProposal(operation: .forbidden)
         }
         return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        dropPreviewParametersForItemAt indexPath: IndexPath
-    ) -> UIDragPreviewParameters? {
-        dragPreviewParameters(for: indexPath)
     }
 
     func collectionView(

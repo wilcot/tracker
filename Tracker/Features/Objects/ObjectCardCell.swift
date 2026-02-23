@@ -23,14 +23,13 @@ final class ObjectCardCell: UICollectionViewCell {
     }
 
     private func setupCell() {
+//        backgroundConfiguration = .clear()
         backgroundColor = .clear
         contentView.backgroundColor = .clear
 
-        layer.masksToBounds = false
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 2)
-        layer.shadowRadius = 8
-        layer.shadowOpacity = 0.06
+//        layer.cornerRadius = ObjectCardView.cornerRadius
+//        layer.cornerCurve = .continuous
+//        layer.masksToBounds = true
 
         cardView.translatesAutoresizingMaskIntoConstraints = false
         cardView.delegate = self
@@ -44,6 +43,10 @@ final class ObjectCardCell: UICollectionViewCell {
         ])
     }
 
+    override func updateConfiguration(using state: UICellConfigurationState) {
+        backgroundConfiguration = .clear()
+    }
+
     func configure(with objectID: NSManagedObjectID, in context: NSManagedObjectContext) {
         guard let object = try? context.existingObject(with: objectID) as? TrackedObject else { return }
         cardView.configure(
@@ -51,14 +54,6 @@ final class ObjectCardCell: UICollectionViewCell {
             iconName: object.displayIconName,
             color: object.displayColor
         )
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        layer.shadowPath = UIBezierPath(
-            roundedRect: cardView.frame,
-            cornerRadius: ObjectCardView.cornerRadius
-        ).cgPath
     }
 
     override func prepareForReuse() {
@@ -162,6 +157,8 @@ final class ObjectCardView: UIView {
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
+
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 150),
         ])
     }
 
